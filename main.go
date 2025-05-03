@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -22,6 +23,13 @@ const (
 	MAX_INLINE_SIZE = 5 * 1024 * 1024
 	// Maximum size for base64 encoding (1MB)
 	MAX_BASE64_SIZE = 1 * 1024 * 1024
+)
+
+var (
+	// MIME types that are excluded from extension-based detection
+	mimeTypesExcludedFromExtensionDetection = []string{
+		"video/mp2t", // .ts files get detected as video/mp2t by mime.TypeByExtension
+	}
 )
 
 type FileInfo struct {
@@ -396,7 +404,7 @@ func detectMimeType(path string) string {
 	ext := filepath.Ext(path)
 	if ext != "" {
 		mimeType := mime.TypeByExtension(ext)
-		if mimeType != "" {
+		if mimeType != "" && slices.Contains(mimeTypesExcludedFromExtensionDetection, mimeType) {
 			return mimeType
 		}
 	}
