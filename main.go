@@ -15,6 +15,7 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
+	"github.com/otiai10/copy"
 )
 
 const (
@@ -131,6 +132,19 @@ func NewFilesystemServer(allowedDirs []string) (*FilesystemServer, error) {
 			mcp.Required(),
 		),
 	), s.handleCreateDirectory)
+
+	s.server.AddTool(mcp.NewTool(
+		"copy_file",
+		mcp.WithDescription("Copy files and directories."),
+		mcp.WithString("source",
+			mcp.Description("Source path of the file or directory"),
+			mcp.Required(),
+		),
+		mcp.WithString("destination",
+			mcp.Description("Destination path"),
+			mcp.Required(),
+		),
+	), s.handleCopyFile)
 
 	s.server.AddTool(mcp.NewTool(
 		"move_file",
@@ -1097,6 +1111,127 @@ func (s *FilesystemServer) handleCreateDirectory(
 					URI:      resourceURI,
 					MIMEType: "text/plain",
 					Text:     fmt.Sprintf("Directory: %s", validPath),
+				},
+			},
+		},
+	}, nil
+}
+
+func (s *FilesystemServer) handleCopyFile(
+	ctx context.Context,
+	request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	source, ok := request.Params.Arguments["source"].(string)
+	if !ok {
+		return nil, fmt.Errorf("source must be a string")
+	}
+	destination, ok := request.Params.Arguments["destination"].(string)
+	if !ok {
+		return nil, fmt.Errorf("destination must be a string")
+	}
+
+	// Handle empty or relative paths for source
+	if source == "." || source == "./" {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{
+					mcp.TextContent{
+						Type: "text",
+						Text: fmt.Sprintf("Error resolving current directory: %v", err),
+					},
+				},
+				IsError: true,
+			}, nil
+		}
+		source = cwd
+	}
+	if destination == "." || destination == "./" {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{
+					mcp.TextContent{
+						Type: "text",
+						Text: fmt.Sprintf("Error resolving current directory: %v", err),
+					},
+				},
+				IsError: true,
+			}, nil
+		}
+		destination = cwd
+	}
+
+	validSource, err := s.validatePath(source)
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				mcp.TextContent{
+					Type: "text",
+					Text: fmt.Sprintf("Error with source path: %v", err),
+				},
+			},
+			IsError: true,
+		}, nil
+	}
+
+	// Check if source exists
+	if _, err := os.Stat(validSource); os.IsNotExist(err) {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				mcp.TextContent{
+					Type: "text",
+					Text: fmt.Sprintf("Error: Source does not exist: %s", source),
+				},
+			},
+			IsError: true,
+		}, nil
+	}
+
+	validDest, err := s.validatePath(destination)
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				mcp.TextContent{
+					Type: "text",
+					Text: fmt.Sprintf("Error with destination path: %v", err),
+				},
+			},
+			IsError: true,
+		}, nil
+	}
+
+	// Use otiai10/copy to perform copy action
+	err = copy.Copy(validSource, validDest)
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				mcp.TextContent{
+					Type: "text",
+					Text: fmt.Sprintf("Error copying file: %v", err),
+				},
+			},
+			IsError: true,
+		}, nil
+	}
+
+	resourceURI := pathToResourceURI(validDest)
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			mcp.TextContent{
+				Type: "text",
+				Text: fmt.Sprintf(
+					"Successfully copied %s to %s",
+					source,
+					destination,
+				),
+			},
+			mcp.EmbeddedResource{
+				Type: "resource",
+				Resource: mcp.TextResourceContents{
+					URI:      resourceURI,
+					MIMEType: "text/plain",
+					Text:     fmt.Sprintf("Copied file: %s", validDest),
 				},
 			},
 		},
