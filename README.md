@@ -1,110 +1,149 @@
-[![smithery badge](https://smithery.ai/badge/@mark3labs/mcp-filesystem-server)](https://smithery.ai/server/@mark3labs/mcp-filesystem-server)
+# MCP Filesystem Server
 
-# Filesystem MCP Server
+This MCP server provides secure access to the local filesystem via the Model Context Protocol (MCP).
 
-Go server implementing Model Context Protocol (MCP) for filesystem operations.
-
-## Features
-
-- Read/write files
-- Create/list/delete directories
-- Move files/directories
-- Search files
-- Get file metadata
-- Generate directory tree structures
-
-**Note**: The server will only allow operations within directories specified via `args`.
-
-## API
-
-### Resources
-
-- `file://system`: File system operations interface
+## Components
 
 ### Tools
 
-- **read_file**
-  - Read complete contents of a file
-  - Input: `path` (string)
-  - Reads complete file contents with UTF-8 encoding
+#### File Operations
 
-- **read_multiple_files**
-  - Read multiple files simultaneously
-  - Input: `paths` (string[])
-  - Failed reads won't stop the entire operation
+- **read_file**
+  - Read the complete contents of a file from the file system
+  - Parameters: `path` (required): Path to the file to read
 
 - **write_file**
-  - Create new file or overwrite existing (exercise caution with this)
-  - Inputs:
-    - `path` (string): File location
-    - `content` (string): File content
-
-- **create_directory**
-  - Create new directory or ensure it exists
-  - Input: `path` (string)
-  - Creates parent directories if needed
-  - Succeeds silently if directory exists
-
-- **list_directory**
-  - List directory contents with [FILE] or [DIR] prefixes
-  - Input: `path` (string)
+  - Create a new file or overwrite an existing file with new content
+  - Parameters: `path` (required): Path where to write the file, `content` (required): Content to write to the file
 
 - **move_file**
   - Move or rename files and directories
-  - Inputs:
-    - `source` (string)
-    - `destination` (string)
-  - Fails if destination exists
+  - Parameters: `source` (required): Source path of the file or directory, `destination` (required): Destination path
 
-- **search_files**
-  - Recursively search for files/directories
-  - Inputs:
-    - `path` (string): Starting directory
-    - `pattern` (string): Search pattern
-  - Case-insensitive matching
-  - Returns full paths to matches
+#### Directory Operations
 
-- **get_file_info**
-  - Get detailed file/directory metadata
-  - Input: `path` (string)
-  - Returns:
-    - Size
-    - Creation time
-    - Modified time
-    - Access time
-    - Type (file/directory)
-    - Permissions
+- **list_directory**
+  - Get a detailed listing of all files and directories in a specified path
+  - Parameters: `path` (required): Path of the directory to list
+
+- **create_directory**
+  - Create a new directory or ensure a directory exists
+  - Parameters: `path` (required): Path of the directory to create
 
 - **tree**
   - Returns a hierarchical JSON representation of a directory structure
-  - Inputs:
-    - `path` (string): Directory to traverse (required)
-    - `depth` (number): Maximum depth to traverse (default: 3)
-    - `follow_symlinks` (boolean): Whether to follow symbolic links (default: false)
-  - Returns formatted JSON with file/directory hierarchy
-  - Includes file metadata (name, path, size, modified time)
+  - Parameters: `path` (required): Path of the directory to traverse, `depth` (optional): Maximum depth to traverse (default: 3), `follow_symlinks` (optional): Whether to follow symbolic links (default: false)
+
+#### Search and Information
+
+- **search_files**
+  - Recursively search for files and directories matching a pattern
+  - Parameters: `path` (required): Starting path for the search, `pattern` (required): Search pattern to match against file names
+
+- **get_file_info**
+  - Retrieve detailed metadata about a file or directory
+  - Parameters: `path` (required): Path to the file or directory
 
 - **list_allowed_directories**
-  - List all directories the server is allowed to access
-  - No input required
-  - Returns:
-    - Directories that this server can read/write from
+  - Returns the list of directories that this server is allowed to access
+  - Parameters: None
 
-## Usage with Claude Desktop
-Install the server
+## Features
+
+- Secure access to specified directories
+- Path validation to prevent directory traversal attacks
+- Symlink resolution with security checks
+- MIME type detection
+- Support for text, binary, and image files
+- Size limits for inline content and base64 encoding
+
+## Getting Started
+
+### Installation
+
+#### Using Go Install
+
 ```bash
-go install github.com/mark3labs/mcp-filesystem-server
+go install github.com/mark3labs/mcp-filesystem-server@latest
 ```
 
-Add this to your `claude_desktop_config.json`:
+### Usage
+
+#### As a standalone server
+
+Start the MCP server with allowed directories:
+
+```bash
+mcp-filesystem-server /path/to/allowed/directory [/another/allowed/directory ...]
+```
+
+#### As a library in your Go project
+
+```go
+package main
+
+import (
+	"log"
+	"os"
+
+	"github.com/mark3labs/mcp-filesystem-server/filesystemserver"
+)
+
+func main() {
+	// Create a new filesystem server with allowed directories
+	allowedDirs := []string{"/path/to/allowed/directory", "/another/allowed/directory"}
+	fs, err := filesystemserver.NewFilesystemServer(allowedDirs)
+	if err != nil {
+		log.Fatalf("Failed to create server: %v", err)
+	}
+
+	// Serve requests
+	if err := fs.Serve(); err != nil {
+		log.Fatalf("Server error: %v", err)
+	}
+}
+```
+
+### Usage with Model Context Protocol
+
+To integrate this server with apps that support MCP:
+
 ```json
 {
   "mcpServers": {
     "filesystem": {
       "command": "mcp-filesystem-server",
+      "args": ["/path/to/allowed/directory", "/another/allowed/directory"]
+    }
+  }
+}
+```
+
+### Docker
+
+#### Running with Docker
+
+You can run the Filesystem MCP server using Docker:
+
+```bash
+docker run -i --rm ghcr.io/mark3labs/mcp-filesystem-server:latest /path/to/allowed/directory
+```
+
+#### Docker Configuration with MCP
+
+To integrate the Docker image with apps that support MCP:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "docker",
       "args": [
-        "/Users/username/Desktop",
-        "/path/to/other/allowed/dir"
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/mark3labs/mcp-filesystem-server:latest",
+        "/path/to/allowed/directory"
       ]
     }
   }
@@ -113,4 +152,4 @@ Add this to your `claude_desktop_config.json`:
 
 ## License
 
-This MCP server is licensed under the MIT License. This means you are free to use, modify, and distribute the software, subject to the terms and conditions of the MIT License. For more details, please see the LICENSE file in the project repository.
+See the [LICENSE](LICENSE) file for details.
