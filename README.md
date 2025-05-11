@@ -12,6 +12,10 @@ This MCP server provides secure access to the local filesystem via the Model Con
   - Read the complete contents of a file from the file system
   - Parameters: `path` (required): Path to the file to read
 
+- **read_multiple_files**
+  - Read the contents of multiple files in a single operation
+  - Parameters: `paths` (required): List of file paths to read
+
 - **write_file**
   - Create a new file or overwrite an existing file with new content
   - Parameters: `path` (required): Path where to write the file, `content` (required): Content to write to the file
