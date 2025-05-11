@@ -16,6 +16,10 @@ This MCP server provides secure access to the local filesystem via the Model Con
   - Create a new file or overwrite an existing file with new content
   - Parameters: `path` (required): Path where to write the file, `content` (required): Content to write to the file
 
+- **copy_file**
+  - Copy files and directories
+  - Parameters: `source` (required): Source path of the file or directory, `destination` (required): Destination path
+
 - **move_file**
   - Move or rename files and directories
   - Parameters: `source` (required): Source path of the file or directory, `destination` (required): Destination path
