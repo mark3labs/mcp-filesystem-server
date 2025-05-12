@@ -14,6 +14,7 @@ import (
 
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/mark3labs/mcp-go/mcp"
+	"slices"
 )
 
 const (
@@ -318,10 +319,8 @@ func isTextFile(mimeType string) bool {
 		"application/x-shellscript",
 	}
 
-	for _, textType := range textApplicationTypes {
-		if mimeType == textType {
-			return true
-		}
+	if slices.Contains(textApplicationTypes, mimeType) {
+		return true
 	}
 
 	// Check for +format types
@@ -1763,7 +1762,7 @@ func (fs *FilesystemHandler) handleReadMultipleFiles(
 	}
 
 	// Convert the paths parameter to a string slice
-	pathsSlice, ok := pathsParam.([]interface{})
+	pathsSlice, ok := pathsParam.([]any)
 	if !ok {
 		return nil, fmt.Errorf("paths must be an array of strings")
 	}
