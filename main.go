@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/mark3labs/mcp-filesystem-server/filesystemserver"
+	"github.com/mark3labs/mcp-go/server"
 )
 
 func main() {
@@ -20,13 +21,14 @@ func main() {
 	}
 
 	// Create and start the server
-	fs, err := filesystemserver.NewFilesystemServer(os.Args[1:])
+	fss, err := filesystemserver.NewFilesystemServer(os.Args[1:])
 	if err != nil {
 		log.Fatalf("Failed to create server: %v", err)
 	}
 
 	// Serve requests
-	if err := fs.Serve(); err != nil {
+	if err := server.ServeStdio(fss); err != nil {
 		log.Fatalf("Server error: %v", err)
 	}
 }
+
