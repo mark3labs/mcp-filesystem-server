@@ -145,5 +145,17 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 		),
 	), h.handleTree)
 
+	s.AddTool(mcp.NewTool(
+		"delete_file",
+		mcp.WithDescription("Delete a file or directory from the file system."),
+		mcp.WithString("path",
+			mcp.Description("Path to the file or directory to delete"),
+			mcp.Required(),
+		),
+		mcp.WithBoolean("recursive",
+			mcp.Description("Whether to recursively delete directories (default: false)"),
+		),
+	), h.handleDeleteFile)
+
 	return s, nil
 }

@@ -28,6 +28,10 @@ This MCP server provides secure access to the local filesystem via the Model Con
   - Move or rename files and directories
   - Parameters: `source` (required): Source path of the file or directory, `destination` (required): Destination path
 
+- **delete_file**
+  - Delete a file or directory from the file system
+  - Parameters: `path` (required): Path to the file or directory to delete, `recursive` (optional): Whether to recursively delete directories (default: false)
+
 #### Directory Operations
 
 - **list_directory**
