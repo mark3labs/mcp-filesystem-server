@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gabriel-vasile/mimetype"
+	"github.com/gobwas/glob"
 	"github.com/mark3labs/mcp-go/mcp"
 	"slices"
 )
@@ -252,7 +253,7 @@ func (fs *FilesystemHandler) searchFiles(
 	rootPath, pattern string,
 ) ([]string, error) {
 	var results []string
-	pattern = strings.ToLower(pattern)
+	globPattern := glob.MustCompile(pattern)
 
 	err := filepath.Walk(
 		rootPath,
@@ -266,7 +267,7 @@ func (fs *FilesystemHandler) searchFiles(
 				return nil // Skip invalid paths
 			}
 
-			if strings.Contains(strings.ToLower(info.Name()), pattern) {
+			if globPattern.Match(info.Name()) {
 				results = append(results, path)
 			}
 			return nil
