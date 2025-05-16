@@ -127,6 +127,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 		mcp.WithArray("paths",
 			mcp.Description("List of file paths to read"),
 			mcp.Required(),
+			mcp.Items(map[string]any{"type": "string"}),
 		),
 	), h.handleReadMultipleFiles)
 
