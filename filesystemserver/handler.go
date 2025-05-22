@@ -480,9 +480,9 @@ func (fs *FilesystemHandler) handleReadFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	path, ok := request.Params.Arguments["path"].(string)
-	if !ok {
-		return nil, fmt.Errorf("path must be a string")
+	path, err := request.RequireString("path")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths like "." or "./" by converting to absolute path
@@ -685,13 +685,13 @@ func (fs *FilesystemHandler) handleWriteFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	path, ok := request.Params.Arguments["path"].(string)
-	if !ok {
-		return nil, fmt.Errorf("path must be a string")
+	path, err := request.RequireString("path")
+	if err != nil {
+		return nil, err
 	}
-	content, ok := request.Params.Arguments["content"].(string)
-	if !ok {
-		return nil, fmt.Errorf("content must be a string")
+	content, err := request.RequireString("content")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths like "." or "./" by converting to absolute path
@@ -801,9 +801,9 @@ func (fs *FilesystemHandler) handleListDirectory(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	path, ok := request.Params.Arguments["path"].(string)
-	if !ok {
-		return nil, fmt.Errorf("path must be a string")
+	path, err := request.RequireString("path")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths like "." or "./" by converting to absolute path
@@ -920,9 +920,9 @@ func (fs *FilesystemHandler) handleCreateDirectory(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	path, ok := request.Params.Arguments["path"].(string)
-	if !ok {
-		return nil, fmt.Errorf("path must be a string")
+	path, err := request.RequireString("path")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths like "." or "./" by converting to absolute path
@@ -1023,13 +1023,13 @@ func (fs *FilesystemHandler) handleCopyFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	source, ok := request.Params.Arguments["source"].(string)
-	if !ok {
-		return nil, fmt.Errorf("source must be a string")
+	source, err := request.RequireString("source")
+	if err != nil {
+		return nil, err
 	}
-	destination, ok := request.Params.Arguments["destination"].(string)
-	if !ok {
-		return nil, fmt.Errorf("destination must be a string")
+	destination, err := request.RequireString("destination")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths for source
@@ -1259,13 +1259,13 @@ func (fs *FilesystemHandler) handleMoveFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	source, ok := request.Params.Arguments["source"].(string)
-	if !ok {
-		return nil, fmt.Errorf("source must be a string")
+	source, err := request.RequireString("source")
+	if err != nil {
+		return nil, err
 	}
-	destination, ok := request.Params.Arguments["destination"].(string)
-	if !ok {
-		return nil, fmt.Errorf("destination must be a string")
+	destination, err := request.RequireString("destination")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths for source
@@ -1396,13 +1396,13 @@ func (fs *FilesystemHandler) handleSearchFiles(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	path, ok := request.Params.Arguments["path"].(string)
-	if !ok {
-		return nil, fmt.Errorf("path must be a string")
+	path, err := request.RequireString("path")
+	if err != nil {
+		return nil, err
 	}
-	pattern, ok := request.Params.Arguments["pattern"].(string)
-	if !ok {
-		return nil, fmt.Errorf("pattern must be a string")
+	pattern, err := request.RequireString("pattern")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths like "." or "./" by converting to absolute path
@@ -1520,9 +1520,9 @@ func (fs *FilesystemHandler) handleTree(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	path, ok := request.Params.Arguments["path"].(string)
-	if !ok {
-		return nil, fmt.Errorf("path must be a string")
+	path, err := request.RequireString("path")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths like "." or "./" by converting to absolute path
@@ -1545,18 +1545,14 @@ func (fs *FilesystemHandler) handleTree(
 
 	// Extract depth parameter (optional, default: 3)
 	depth := 3 // Default value
-	if depthParam, ok := request.Params.Arguments["depth"]; ok {
-		if d, ok := depthParam.(float64); ok {
-			depth = int(d)
-		}
+	if depthParam, err := request.RequireFloat("depth"); err != nil {
+		depth = int(depthParam)
 	}
 
 	// Extract follow_symlinks parameter (optional, default: false)
 	followSymlinks := false // Default value
-	if followParam, ok := request.Params.Arguments["follow_symlinks"]; ok {
-		if f, ok := followParam.(bool); ok {
-			followSymlinks = f
-		}
+	if followParam, err := request.RequireBool("follow_symlinks"); err != nil {
+		followSymlinks = followParam
 	}
 
 	// Validate the path is within allowed directories
@@ -1653,9 +1649,9 @@ func (fs *FilesystemHandler) handleGetFileInfo(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	path, ok := request.Params.Arguments["path"].(string)
-	if !ok {
-		return nil, fmt.Errorf("path must be a string")
+	path, err := request.RequireString("path")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths like "." or "./" by converting to absolute path
@@ -1756,15 +1752,9 @@ func (fs *FilesystemHandler) handleReadMultipleFiles(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	pathsParam, ok := request.Params.Arguments["paths"]
-	if !ok {
-		return nil, fmt.Errorf("paths parameter is required")
-	}
-
-	// Convert the paths parameter to a string slice
-	pathsSlice, ok := pathsParam.([]any)
-	if !ok {
-		return nil, fmt.Errorf("paths must be an array of strings")
+	pathsSlice, err := request.RequireStringSlice("paths")
+	if err != nil {
+		return nil, err
 	}
 
 	if len(pathsSlice) == 0 {
@@ -1795,12 +1785,7 @@ func (fs *FilesystemHandler) handleReadMultipleFiles(
 
 	// Process each file
 	var results []mcp.Content
-	for _, pathInterface := range pathsSlice {
-		path, ok := pathInterface.(string)
-		if !ok {
-			return nil, fmt.Errorf("each path must be a string")
-		}
-
+	for _, path := range pathsSlice {
 		// Handle empty or relative paths like "." or "./" by converting to absolute path
 		if path == "." || path == "./" {
 			// Get current working directory
@@ -1941,9 +1926,9 @@ func (fs *FilesystemHandler) handleDeleteFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	path, ok := request.Params.Arguments["path"].(string)
-	if !ok {
-		return nil, fmt.Errorf("path must be a string")
+	path, err := request.RequireString("path")
+	if err != nil {
+		return nil, err
 	}
 
 	// Handle empty or relative paths like "." or "./" by converting to absolute path
@@ -2003,10 +1988,8 @@ func (fs *FilesystemHandler) handleDeleteFile(
 
 	// Extract recursive parameter (optional, default: false)
 	recursive := false
-	if recursiveParam, ok := request.Params.Arguments["recursive"]; ok {
-		if r, ok := recursiveParam.(bool); ok {
-			recursive = r
-		}
+	if recursiveParam, err := request.RequireBool("recursive"); err != nil {
+		recursive = recursiveParam
 	}
 
 	// Check if it's a directory and handle accordingly
