@@ -4,6 +4,7 @@ go 1.23.2
 
 require (
 	github.com/gabriel-vasile/mimetype v1.4.3
+	github.com/gobwas/glob v0.2.3
 	github.com/mark3labs/mcp-go v0.29.0
 	github.com/stretchr/testify v1.9.0
 )
