@@ -16,7 +16,7 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - -s -w
+      - -s -w -X github.com/mark3labs/mcp-filesystem-server/filesystemserver.Version={{.Version}}
     binary: mcp-filesystem-server
     main: .
 
@@ -40,7 +40,7 @@ checksum:
 
 # Using new snapshot configuration
 snapshot:
-  name_template: "{{ .Version }}-SNAPSHOT-{{ .ShortCommit }}"
+  version_template: "{{ .Version }}-SNAPSHOT-{{ .ShortCommit }}"
 
 changelog:
   sort: asc
