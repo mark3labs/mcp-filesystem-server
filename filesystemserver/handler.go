@@ -9,13 +9,14 @@ import (
 	"mime"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
+	"github.com/djherbis/times"
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/gobwas/glob"
 	"github.com/mark3labs/mcp-go/mcp"
-	"slices"
 )
 
 const (
@@ -238,11 +239,13 @@ func (fs *FilesystemHandler) getFileStats(path string) (FileInfo, error) {
 		return FileInfo{}, err
 	}
 
+	timespec := times.Get(info)
+
 	return FileInfo{
 		Size:        info.Size(),
-		Created:     info.ModTime(), // Note: ModTime used as birth time isn't always available
-		Modified:    info.ModTime(),
-		Accessed:    info.ModTime(), // Note: Access time isn't always available
+		Created:     timespec.BirthTime(),
+		Modified:    timespec.ModTime(),
+		Accessed:    timespec.AccessTime(),
 		IsDirectory: info.IsDir(),
 		IsFile:      !info.IsDir(),
 		Permissions: fmt.Sprintf("%o", info.Mode().Perm()),
