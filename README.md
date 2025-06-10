@@ -162,6 +162,26 @@ To integrate the Docker image with apps that support MCP:
 }
 ```
 
+If you need changes made inside the container to reflect on the host filesystem, you can mount a volume. This allows the container to access and modify files on the host system. Here's an example:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--volume=/allowed/directory/in/host:/allowed/directory/in/container",
+        "ghcr.io/mark3labs/mcp-filesystem-server:latest",
+        "/allowed/directory/in/container"
+      ]
+    }
+  }
+}
+```
+
 ## License
 
 See the [LICENSE](LICENSE) file for details.
