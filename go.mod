@@ -6,7 +6,7 @@ require (
 	github.com/djherbis/times v1.6.0
 	github.com/gabriel-vasile/mimetype v1.4.9
 	github.com/gobwas/glob v0.2.3
-	github.com/mark3labs/mcp-go v0.31.0
+	github.com/mark3labs/mcp-go v0.32.0
 	github.com/stretchr/testify v1.10.0
 )
 
