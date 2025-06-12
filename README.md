@@ -32,6 +32,10 @@ This MCP server provides secure access to the local filesystem via the Model Con
   - Delete a file or directory from the file system
   - Parameters: `path` (required): Path to the file or directory to delete, `recursive` (optional): Whether to recursively delete directories (default: false)
 
+- **modify_file**
+  - Update file by finding and replacing text using string matching or regex
+  - Parameters: `path` (required): Path to the file to modify, `find` (required): Text to search for, `replace` (required): Text to replace with, `all_occurrences` (optional): Replace all occurrences (default: true), `regex` (optional): Treat find pattern as regex (default: false)
+
 #### Directory Operations
 
 - **list_directory**
@@ -51,6 +55,10 @@ This MCP server provides secure access to the local filesystem via the Model Con
 - **search_files**
   - Recursively search for files and directories matching a pattern
   - Parameters: `path` (required): Starting path for the search, `pattern` (required): Search pattern to match against file names
+
+- **search_within_files**
+  - Search for text within file contents across directory trees
+  - Parameters: `path` (required): Starting directory for the search, `substring` (required): Text to search for within file contents, `depth` (optional): Maximum directory depth to search, `max_results` (optional): Maximum number of results to return (default: 1000)
 
 - **get_file_info**
   - Retrieve detailed metadata about a file or directory
