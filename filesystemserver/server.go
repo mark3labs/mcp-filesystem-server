@@ -158,5 +158,47 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 		),
 	), h.handleDeleteFile)
 
+	s.AddTool(mcp.NewTool(
+		"modify_file",
+		mcp.WithDescription("Update file by finding and replacing text. Provides a simple pattern matching interface without needing exact character positions."),
+		mcp.WithString("path",
+			mcp.Description("Path to the file to modify"),
+			mcp.Required(),
+		),
+		mcp.WithString("find",
+			mcp.Description("Text to search for (exact match or regex pattern)"),
+			mcp.Required(),
+		),
+		mcp.WithString("replace",
+			mcp.Description("Text to replace with"),
+			mcp.Required(),
+		),
+		mcp.WithBoolean("all_occurrences",
+			mcp.Description("Replace all occurrences of the matching text (default: true)"),
+		),
+		mcp.WithBoolean("regex",
+			mcp.Description("Treat the find pattern as a regular expression (default: false)"),
+		),
+	), h.handleModifyFile)
+
+	s.AddTool(mcp.NewTool(
+		"search_within_files",
+		mcp.WithDescription("Search for text within file contents. Unlike search_files which only searches file names, this tool scans the actual contents of text files for matching substrings. Binary files are automatically excluded from the search. Reports file paths and line numbers where matches are found."),
+		mcp.WithString("path",
+			mcp.Description("Starting path for the search (must be a directory)"),
+			mcp.Required(),
+		),
+		mcp.WithString("substring",
+			mcp.Description("Text to search for within file contents"),
+			mcp.Required(),
+		),
+		mcp.WithNumber("depth",
+			mcp.Description("Maximum directory depth to search (default: unlimited)"),
+		),
+		mcp.WithNumber("max_results",
+			mcp.Description("Maximum number of results to return (default: 1000)"),
+		),
+	), h.handleSearchWithinFiles)
+
 	return s, nil
 }
