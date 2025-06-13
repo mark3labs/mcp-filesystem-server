@@ -19,7 +19,7 @@ func TestReadfile_Valid(t *testing.T) {
 	err := os.WriteFile(filepath.Join(dir, "test"), []byte(content), 0644)
 	require.NoError(t, err)
 
-	handler, err := NewFilesystemHandler([]string{dir})
+	handler, err := NewFilesystemHandler(resolveAllowedDirs(t, dir))
 	require.NoError(t, err)
 	request := mcp.CallToolRequest{}
 	request.Params.Name = "read_file"
@@ -35,7 +35,7 @@ func TestReadfile_Valid(t *testing.T) {
 
 func TestReadfile_Invalid(t *testing.T) {
 	dir := t.TempDir()
-	handler, err := NewFilesystemHandler([]string{dir})
+	handler, err := NewFilesystemHandler(resolveAllowedDirs(t, dir))
 	require.NoError(t, err)
 
 	request := mcp.CallToolRequest{}
@@ -54,7 +54,7 @@ func TestReadfile_NoAccess(t *testing.T) {
 	dir1 := t.TempDir()
 	dir2 := t.TempDir()
 
-	handler, err := NewFilesystemHandler([]string{dir1})
+	handler, err := NewFilesystemHandler(resolveAllowedDirs(t, dir1))
 	require.NoError(t, err)
 
 	request := mcp.CallToolRequest{}
@@ -100,7 +100,7 @@ func TestSearchFiles_Pattern(t *testing.T) {
 	err = os.WriteFile(foo_test_c, []byte("foo"), 0644)
 	require.NoError(t, err)
 
-	handler, err := NewFilesystemHandler([]string{dir})
+	handler, err := NewFilesystemHandler(resolveAllowedDirs(t, dir))
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -132,4 +132,23 @@ func TestSearchFiles_Pattern(t *testing.T) {
 			}
 		})
 	}
+}
+
+// resolveAllowedDirs generates a list of allowed paths, including their resolved symlinks.
+// This ensures both the original paths and their symlink-resolved counterparts are included,
+// which is useful when paths may be symlinks (e.g., t.TempDir() on some Unix systems).
+func resolveAllowedDirs(t *testing.T, dirs ...string) []string {
+	t.Helper()
+	allowedDirs := make([]string, 0)
+	for _, dir := range dirs {
+		allowedDirs = append(allowedDirs, dir)
+
+		resolvedPath, err := filepath.EvalSymlinks(dir)
+		require.NoError(t, err, "Failed to resolve symlinks for directory: %s", dir)
+
+		if resolvedPath != dir {
+			allowedDirs = append(allowedDirs, resolvedPath)
+		}
+	}
+	return allowedDirs
 }
