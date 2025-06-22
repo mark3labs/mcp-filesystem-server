@@ -253,11 +253,19 @@ func (fs *FilesystemHandler) getFileStats(path string) (FileInfo, error) {
 		return FileInfo{}, err
 	}
 
-	timespec := times.Get(info)
+	timespec, err := times.Stat(path)
+	if err != nil {
+		return FileInfo{}, fmt.Errorf("failed to get file times: %w", err)
+	}
+
+	createdTime := time.Time{}
+	if timespec.HasBirthTime() {
+		createdTime = timespec.BirthTime()
+	}
 
 	return FileInfo{
 		Size:        info.Size(),
-		Created:     timespec.BirthTime(),
+		Created:     createdTime,
 		Modified:    timespec.ModTime(),
 		Accessed:    timespec.AccessTime(),
 		IsDirectory: info.IsDir(),
