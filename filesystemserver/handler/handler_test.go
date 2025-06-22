@@ -1,4 +1,4 @@
-package filesystemserver
+package handler
 
 import (
 	"context"
@@ -27,7 +27,7 @@ func TestReadfile_Valid(t *testing.T) {
 		"path": filepath.Join(dir, "test"),
 	}
 
-	result, err := handler.handleReadFile(context.Background(), request)
+	result, err := handler.HandleReadFile(context.Background(), request)
 	require.NoError(t, err)
 	assert.Len(t, result.Content, 1)
 	assert.Equal(t, content, result.Content[0].(mcp.TextContent).Text)
@@ -44,7 +44,7 @@ func TestReadfile_Invalid(t *testing.T) {
 		"path": filepath.Join(dir, "test"),
 	}
 
-	result, err := handler.handleReadFile(context.Background(), request)
+	result, err := handler.HandleReadFile(context.Background(), request)
 	require.NoError(t, err)
 	assert.True(t, result.IsError)
 	assert.Contains(t, fmt.Sprint(result.Content[0]), "no such file or directory")
@@ -63,7 +63,7 @@ func TestReadfile_NoAccess(t *testing.T) {
 		"path": filepath.Join(dir2, "test"),
 	}
 
-	result, err := handler.handleReadFile(context.Background(), request)
+	result, err := handler.HandleReadFile(context.Background(), request)
 	require.NoError(t, err)
 	assert.True(t, result.IsError)
 	assert.Contains(t, fmt.Sprint(result.Content[0]), "access denied - path outside allowed directories")
@@ -122,7 +122,7 @@ func TestSearchFiles_Pattern(t *testing.T) {
 				"pattern": test.pattern,
 			}
 
-			result, err := handler.handleSearchFiles(context.Background(), request)
+			result, err := handler.HandleSearchFiles(context.Background(), request)
 			require.NoError(t, err)
 			assert.False(t, result.IsError)
 			assert.Len(t, result.Content, 1)

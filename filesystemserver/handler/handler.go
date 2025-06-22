@@ -1,4 +1,4 @@
-package filesystemserver
+package handler
 
 import (
 	"bufio"
@@ -493,7 +493,7 @@ func pathToResourceURI(path string) string {
 }
 
 // Resource handler
-func (fs *FilesystemHandler) handleReadResource(
+func (fs *FilesystemHandler) HandleReadResource(
 	ctx context.Context,
 	request mcp.ReadResourceRequest,
 ) ([]mcp.ResourceContents, error) {
@@ -612,7 +612,7 @@ func (fs *FilesystemHandler) handleReadResource(
 
 // Tool handlers
 
-func (fs *FilesystemHandler) handleReadFile(
+func (fs *FilesystemHandler) HandleReadFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -817,7 +817,7 @@ func (fs *FilesystemHandler) handleReadFile(
 	}
 }
 
-func (fs *FilesystemHandler) handleWriteFile(
+func (fs *FilesystemHandler) HandleWriteFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -933,7 +933,7 @@ func (fs *FilesystemHandler) handleWriteFile(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleListDirectory(
+func (fs *FilesystemHandler) HandleListDirectory(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -1052,7 +1052,7 @@ func (fs *FilesystemHandler) handleListDirectory(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleCreateDirectory(
+func (fs *FilesystemHandler) HandleCreateDirectory(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -1155,7 +1155,7 @@ func (fs *FilesystemHandler) handleCreateDirectory(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleCopyFile(
+func (fs *FilesystemHandler) HandleCopyFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -1391,7 +1391,7 @@ func copyDir(src, dst string) error {
 	return nil
 }
 
-func (fs *FilesystemHandler) handleMoveFile(
+func (fs *FilesystemHandler) HandleMoveFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -1528,7 +1528,7 @@ func (fs *FilesystemHandler) handleMoveFile(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleSearchFiles(
+func (fs *FilesystemHandler) HandleSearchFiles(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -1652,7 +1652,7 @@ func (fs *FilesystemHandler) handleSearchFiles(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleTree(
+func (fs *FilesystemHandler) HandleTree(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -1781,7 +1781,7 @@ func (fs *FilesystemHandler) handleTree(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleGetFileInfo(
+func (fs *FilesystemHandler) HandleGetFileInfo(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -1884,7 +1884,7 @@ func (fs *FilesystemHandler) handleGetFileInfo(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleReadMultipleFiles(
+func (fs *FilesystemHandler) HandleReadMultipleFiles(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -2058,7 +2058,7 @@ func (fs *FilesystemHandler) handleReadMultipleFiles(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleDeleteFile(
+func (fs *FilesystemHandler) HandleDeleteFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -2189,7 +2189,7 @@ func (fs *FilesystemHandler) handleDeleteFile(
 }
 
 // handleModifyFile handles the modify_file tool request
-func (fs *FilesystemHandler) handleModifyFile(
+func (fs *FilesystemHandler) HandleModifyFile(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -2388,7 +2388,7 @@ func (fs *FilesystemHandler) handleModifyFile(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleSearchWithinFiles(
+func (fs *FilesystemHandler) HandleSearchWithinFiles(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
@@ -2586,7 +2586,7 @@ func (fs *FilesystemHandler) handleSearchWithinFiles(
 	}, nil
 }
 
-func (fs *FilesystemHandler) handleListAllowedDirectories(
+func (fs *FilesystemHandler) HandleListAllowedDirectories(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
