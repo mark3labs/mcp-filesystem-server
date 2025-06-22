@@ -4,6 +4,12 @@ This MCP server provides secure access to the local filesystem via the Model Con
 
 ## Components
 
+### Resources
+
+- **file://**
+  - Name: File System
+  - Description: Access to files and directories on the local file system
+
 ### Tools
 
 #### File Operations
