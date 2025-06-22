@@ -84,13 +84,15 @@ func (fs *FilesystemHandler) HandleMoveFile(
 		}, nil
 	}
 
-	validDest, err := fs.validatePath(destination)
+	// For destination path, validate the parent directory first and create it if needed
+	destDir := filepath.Dir(destination)
+	validDestDir, err := fs.validatePath(destDir)
 	if err != nil {
 		return &mcp.CallToolResult{
 			Content: []mcp.Content{
 				mcp.TextContent{
 					Type: "text",
-					Text: fmt.Sprintf("Error with destination path: %v", err),
+					Text: fmt.Sprintf("Error with destination directory path: %v", err),
 				},
 			},
 			IsError: true,
@@ -98,13 +100,26 @@ func (fs *FilesystemHandler) HandleMoveFile(
 	}
 
 	// Create parent directory for destination if it doesn't exist
-	destDir := filepath.Dir(validDest)
-	if err := os.MkdirAll(destDir, 0755); err != nil {
+	if err := os.MkdirAll(validDestDir, 0755); err != nil {
 		return &mcp.CallToolResult{
 			Content: []mcp.Content{
 				mcp.TextContent{
 					Type: "text",
 					Text: fmt.Sprintf("Error creating destination directory: %v", err),
+				},
+			},
+			IsError: true,
+		}, nil
+	}
+
+	// Now validate the full destination path
+	validDest, err := fs.validatePath(destination)
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				mcp.TextContent{
+					Type: "text",
+					Text: fmt.Sprintf("Error with destination path: %v", err),
 				},
 			},
 			IsError: true,

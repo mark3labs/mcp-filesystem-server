@@ -74,7 +74,7 @@ func (fs *FilesystemHandler) HandleDeleteFile(
 
 	// Extract recursive parameter (optional, default: false)
 	recursive := false
-	if recursiveParam, err := request.RequireBool("recursive"); err != nil {
+	if recursiveParam, err := request.RequireBool("recursive"); err == nil {
 		recursive = recursiveParam
 	}
 

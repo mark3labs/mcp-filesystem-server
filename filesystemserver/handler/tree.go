@@ -39,13 +39,13 @@ func (fs *FilesystemHandler) HandleTree(
 
 	// Extract depth parameter (optional, default: 3)
 	depth := 3 // Default value
-	if depthParam, err := request.RequireFloat("depth"); err != nil {
+	if depthParam, err := request.RequireFloat("depth"); err == nil {
 		depth = int(depthParam)
 	}
 
 	// Extract follow_symlinks parameter (optional, default: false)
 	followSymlinks := false // Default value
-	if followParam, err := request.RequireBool("follow_symlinks"); err != nil {
+	if followParam, err := request.RequireBool("follow_symlinks"); err == nil {
 		followSymlinks = followParam
 	}
 
