@@ -1,6 +1,7 @@
 package filesystemserver
 
 import (
+	"github.com/mark3labs/mcp-filesystem-server/filesystemserver/handler"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -9,7 +10,7 @@ var Version = "dev"
 
 func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 
-	h, err := NewFilesystemHandler(allowedDirs)
+	h, err := handler.NewFilesystemHandler(allowedDirs)
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +26,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 		"file://",
 		"File System",
 		mcp.WithResourceDescription("Access to files and directories on the local file system"),
-	), h.handleReadResource)
+	), h.HandleReadResource)
 
 	// Register tool handlers
 	s.AddTool(mcp.NewTool(
@@ -35,7 +36,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 			mcp.Description("Path to the file to read"),
 			mcp.Required(),
 		),
-	), h.handleReadFile)
+	), h.HandleReadFile)
 
 	s.AddTool(mcp.NewTool(
 		"write_file",
@@ -48,7 +49,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 			mcp.Description("Content to write to the file"),
 			mcp.Required(),
 		),
-	), h.handleWriteFile)
+	), h.HandleWriteFile)
 
 	s.AddTool(mcp.NewTool(
 		"list_directory",
@@ -57,7 +58,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 			mcp.Description("Path of the directory to list"),
 			mcp.Required(),
 		),
-	), h.handleListDirectory)
+	), h.HandleListDirectory)
 
 	s.AddTool(mcp.NewTool(
 		"create_directory",
@@ -66,7 +67,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 			mcp.Description("Path of the directory to create"),
 			mcp.Required(),
 		),
-	), h.handleCreateDirectory)
+	), h.HandleCreateDirectory)
 
 	s.AddTool(mcp.NewTool(
 		"copy_file",
@@ -79,7 +80,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 			mcp.Description("Destination path"),
 			mcp.Required(),
 		),
-	), h.handleCopyFile)
+	), h.HandleCopyFile)
 
 	s.AddTool(mcp.NewTool(
 		"move_file",
@@ -92,7 +93,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 			mcp.Description("Destination path"),
 			mcp.Required(),
 		),
-	), h.handleMoveFile)
+	), h.HandleMoveFile)
 
 	s.AddTool(mcp.NewTool(
 		"search_files",
@@ -105,7 +106,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 			mcp.Description("Search pattern to match against file names"),
 			mcp.Required(),
 		),
-	), h.handleSearchFiles)
+	), h.HandleSearchFiles)
 
 	s.AddTool(mcp.NewTool(
 		"get_file_info",
@@ -114,12 +115,12 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 			mcp.Description("Path to the file or directory"),
 			mcp.Required(),
 		),
-	), h.handleGetFileInfo)
+	), h.HandleGetFileInfo)
 
 	s.AddTool(mcp.NewTool(
 		"list_allowed_directories",
 		mcp.WithDescription("Returns the list of directories that this server is allowed to access."),
-	), h.handleListAllowedDirectories)
+	), h.HandleListAllowedDirectories)
 
 	s.AddTool(mcp.NewTool(
 		"read_multiple_files",
@@ -129,7 +130,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 			mcp.Required(),
 			mcp.Items(map[string]any{"type": "string"}),
 		),
-	), h.handleReadMultipleFiles)
+	), h.HandleReadMultipleFiles)
 
 	s.AddTool(mcp.NewTool(
 		"tree",
@@ -144,7 +145,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 		mcp.WithBoolean("follow_symlinks",
 			mcp.Description("Whether to follow symbolic links (default: false)"),
 		),
-	), h.handleTree)
+	), h.HandleTree)
 
 	s.AddTool(mcp.NewTool(
 		"delete_file",
@@ -156,7 +157,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 		mcp.WithBoolean("recursive",
 			mcp.Description("Whether to recursively delete directories (default: false)"),
 		),
-	), h.handleDeleteFile)
+	), h.HandleDeleteFile)
 
 	s.AddTool(mcp.NewTool(
 		"modify_file",
@@ -179,7 +180,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 		mcp.WithBoolean("regex",
 			mcp.Description("Treat the find pattern as a regular expression (default: false)"),
 		),
-	), h.handleModifyFile)
+	), h.HandleModifyFile)
 
 	s.AddTool(mcp.NewTool(
 		"search_within_files",
@@ -198,7 +199,7 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 		mcp.WithNumber("max_results",
 			mcp.Description("Maximum number of results to return (default: 1000)"),
 		),
-	), h.handleSearchWithinFiles)
+	), h.HandleSearchWithinFiles)
 
 	return s, nil
 }
