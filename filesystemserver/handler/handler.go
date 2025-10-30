@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type FilesystemHandler struct {
@@ -33,7 +34,11 @@ func NewFilesystemHandler(allowedDirs []string) (*FilesystemHandler, error) {
 
 		// Ensure the path ends with a separator to prevent prefix matching issues
 		// For example, /tmp/foo should not match /tmp/foobar
-		normalized = append(normalized, filepath.Clean(abs)+string(filepath.Separator))
+		cleanPath := filepath.Clean(abs)
+		if !strings.HasSuffix(cleanPath, string(filepath.Separator)) {
+			cleanPath = cleanPath + string(filepath.Separator)
+		}
+		normalized = append(normalized, cleanPath)
 	}
 	return &FilesystemHandler{
 		allowedDirs: normalized,
