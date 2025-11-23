@@ -69,8 +69,11 @@ func TestSearchFiles_Pattern(t *testing.T) {
 			assert.False(t, result.IsError)
 			assert.Len(t, result.Content, 1)
 
+			resultText := result.Content[0].(mcp.TextContent).Text
 			for _, match := range test.matches {
-				assert.Contains(t, result.Content[0].(mcp.TextContent).Text, match)
+				resolvedMatch, err := filepath.EvalSymlinks(match)
+				require.NoError(t, err)
+				assert.Contains(t, resultText, resolvedMatch)
 			}
 		})
 	}
