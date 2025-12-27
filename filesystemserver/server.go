@@ -32,6 +32,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"read_file",
 		mcp.WithDescription("Read the complete contents of a file from the file system."),
+		mcp.WithTitleAnnotation("Read File"),
+		mcp.WithReadOnlyHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Path to the file to read"),
 			mcp.Required(),
@@ -41,6 +43,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"write_file",
 		mcp.WithDescription("Create a new file or overwrite an existing file with new content."),
+		mcp.WithTitleAnnotation("Write File"),
+		mcp.WithDestructiveHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Path where to write the file"),
 			mcp.Required(),
@@ -54,6 +58,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"list_directory",
 		mcp.WithDescription("Get a detailed listing of all files and directories in a specified path."),
+		mcp.WithTitleAnnotation("List Directory"),
+		mcp.WithReadOnlyHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Path of the directory to list"),
 			mcp.Required(),
@@ -63,6 +69,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"create_directory",
 		mcp.WithDescription("Create a new directory or ensure a directory exists."),
+		mcp.WithTitleAnnotation("Create Directory"),
+		mcp.WithDestructiveHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Path of the directory to create"),
 			mcp.Required(),
@@ -72,6 +80,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"copy_file",
 		mcp.WithDescription("Copy files and directories."),
+		mcp.WithTitleAnnotation("Copy File"),
+		mcp.WithDestructiveHintAnnotation(true),
 		mcp.WithString("source",
 			mcp.Description("Source path of the file or directory"),
 			mcp.Required(),
@@ -85,6 +95,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"move_file",
 		mcp.WithDescription("Move or rename files and directories."),
+		mcp.WithTitleAnnotation("Move File"),
+		mcp.WithDestructiveHintAnnotation(true),
 		mcp.WithString("source",
 			mcp.Description("Source path of the file or directory"),
 			mcp.Required(),
@@ -98,6 +110,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"search_files",
 		mcp.WithDescription("Recursively search for files and directories matching a pattern."),
+		mcp.WithTitleAnnotation("Search Files"),
+		mcp.WithReadOnlyHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Starting path for the search"),
 			mcp.Required(),
@@ -111,6 +125,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"get_file_info",
 		mcp.WithDescription("Retrieve detailed metadata about a file or directory."),
+		mcp.WithTitleAnnotation("Get File Info"),
+		mcp.WithReadOnlyHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Path to the file or directory"),
 			mcp.Required(),
@@ -120,11 +136,15 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"list_allowed_directories",
 		mcp.WithDescription("Returns the list of directories that this server is allowed to access."),
+		mcp.WithTitleAnnotation("List Allowed Directories"),
+		mcp.WithReadOnlyHintAnnotation(true),
 	), h.HandleListAllowedDirectories)
 
 	s.AddTool(mcp.NewTool(
 		"read_multiple_files",
 		mcp.WithDescription("Read the contents of multiple files in a single operation."),
+		mcp.WithTitleAnnotation("Read Multiple Files"),
+		mcp.WithReadOnlyHintAnnotation(true),
 		mcp.WithArray("paths",
 			mcp.Description("List of file paths to read"),
 			mcp.Required(),
@@ -135,6 +155,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"tree",
 		mcp.WithDescription("Returns a hierarchical JSON representation of a directory structure."),
+		mcp.WithTitleAnnotation("Tree"),
+		mcp.WithReadOnlyHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Path of the directory to traverse"),
 			mcp.Required(),
@@ -150,6 +172,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"delete_file",
 		mcp.WithDescription("Delete a file or directory from the file system."),
+		mcp.WithTitleAnnotation("Delete File"),
+		mcp.WithDestructiveHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Path to the file or directory to delete"),
 			mcp.Required(),
@@ -162,6 +186,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"modify_file",
 		mcp.WithDescription("Update file by finding and replacing text. Provides a simple pattern matching interface without needing exact character positions."),
+		mcp.WithTitleAnnotation("Modify File"),
+		mcp.WithDestructiveHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Path to the file to modify"),
 			mcp.Required(),
@@ -185,6 +211,8 @@ func NewFilesystemServer(allowedDirs []string) (*server.MCPServer, error) {
 	s.AddTool(mcp.NewTool(
 		"search_within_files",
 		mcp.WithDescription("Search for text within file contents. Unlike search_files which only searches file names, this tool scans the actual contents of text files for matching substrings. Binary files are automatically excluded from the search. Reports file paths and line numbers where matches are found."),
+		mcp.WithTitleAnnotation("Search Within Files"),
+		mcp.WithReadOnlyHintAnnotation(true),
 		mcp.WithString("path",
 			mcp.Description("Starting path for the search (must be a directory)"),
 			mcp.Required(),
