@@ -20,8 +20,8 @@ FROM alpine:latest
 WORKDIR /app
 
 # Copy the built binary from the builder stage
-COPY --from=builder /app/server ./
+COPY --from=builder /app/server /app
 
 # The container will by default pass '/app' as the allowed directory if no other command line arguments are provided
-ENTRYPOINT ["./server"]
+ENTRYPOINT ["/app/server"]
 CMD ["/app"]
