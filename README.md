@@ -83,6 +83,10 @@ This MCP server provides secure access to the local filesystem via the Model Con
 - Support for text, binary, and image files
 - Size limits for inline content and base64 encoding
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/mark3labs-mcp-filesystem-server).
+
 ## Getting Started
 
 ### Installation
