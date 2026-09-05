@@ -100,6 +100,20 @@ func (fs *FilesystemHandler) HandleModifyFile(
 		}, nil
 	}
 
+	// Check file size before reading into memory, consistent with the
+	// read handlers (read_file, read_multiple_files, search_within_files).
+	if info, err := os.Stat(validPath); err == nil && info.Size() > MAX_INLINE_SIZE {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				mcp.TextContent{
+					Type: "text",
+					Text: fmt.Sprintf("Error: File is too large to modify in memory (%d bytes, limit %d bytes)", info.Size(), MAX_INLINE_SIZE),
+				},
+			},
+			IsError: true,
+		}, nil
+	}
+
 	// Read file content
 	content, err := os.ReadFile(validPath)
 	if err != nil {
